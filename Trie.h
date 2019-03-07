@@ -20,25 +20,45 @@ public:
 private:
 	struct tNode
 	{
-		char label;
+		//char label;
 		vector<ValueType> values;
 		tNode* children[5];
-	}
+	};
 	tNode *root;
-	//void insertHelper(const std::string& key, const ValueType& value)
+	void insertHelper(const std::string& key, tNode* cur, const ValueType& value)
 };
 
 template<typename ValueType>
 Trie<ValueType>::Trie()
 {
+	tNode *root_node = new tNode;
+	root_node->children = nullptr;
+	root_node->values = nullptr;
 	root = nullptr;
+
 }
 
 template<typename ValueType>
 void Trie<ValueType>::insert(const std::string& key, const ValueType& value)
 {
-	tNode = *temp;
+	insertHelper(key, root, value);
+}
 
+template<typename ValueType>
+void Trie<ValueType>::insertHelper(const std::string& key, tNode* cur, const ValueType& value)
+{
+	if (key.size() == 0)
+		return;
+
+	tNode *cur = root;
+	if (key[0] == 'A')
+		insertHelper(key, )
+	if((key[0] == 'T')
+		return;
+	if((key[0] == 'C')
+		return;
+	if((key[0] == 'G')
+		return;
 }
 
 template<typename ValueType>
