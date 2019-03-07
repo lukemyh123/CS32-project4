@@ -8,38 +8,42 @@ template<typename ValueType>
 class Trie
 {
 public:
-    Trie();
-    ~Trie();
-    void reset();
-    void insert(const std::string& key, const ValueType& value);
-    std::vector<ValueType> find(const std::string& key, bool exactMatchOnly) const;
-    
-    // C++11 syntax for preventing copying and assignment
-    Trie(const Trie&) = delete;
-    Trie& operator=(const Trie&) = delete;
+	Trie();
+	~Trie();
+	void reset();
+	void insert(const std::string& key, const ValueType& value);
+	std::vector<ValueType> find(const std::string& key, bool exactMatchOnly) const;
+
+	// C++11 syntax for preventing copying and assignment
+	Trie(const Trie&) = delete;
+	Trie& operator=(const Trie&) = delete;
 private:
-    struct tNode
-    {
-        char c;
-        vector<ValueType> values;
-        tNode* children[5];
-    }
-    tNode *root;
+	struct tNode
+	{
+		char label;
+		vector<ValueType> values;
+		tNode* children[5];
+	}
+	tNode *root;
+	//void insertHelper(const std::string& key, const ValueType& value)
 };
 
-Trie::Trie()
+template<typename ValueType>
+Trie<ValueType>::Trie()
 {
-    root->values = nullptr;
+	root = nullptr;
 }
 
-void Trie::insert(const std::string& key, const ValueType& value)
+template<typename ValueType>
+void Trie<ValueType>::insert(const std::string& key, const ValueType& value)
 {
-    
+	tNode = *temp;
+
 }
 
-std::vector<ValueType> Trie::find(const std::string& key, bool exactMatchOnly) const
+template<typename ValueType>
+std::vector<ValueType> Trie<ValueType> ::find(const std::string& key, bool exactMatchOnly) const
 {
-    
+
 }
 #endif // TRIE_INCLUDED
-
