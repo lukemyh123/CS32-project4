@@ -24,47 +24,35 @@ private:
     {
         char label;
         std::vector<ValueType> values;
-        tNode* children[5];  //A,T,C,G
+        std::vector<tNode*> children;  //A,T,C,G
     };
     tNode *root;
 
     void insertHelper(const std::string& key, tNode* cur, const ValueType& value);
     std::vector<ValueType> findHelper(const std::string& key, tNode* cur, bool exactMatchOnly) const;
 
-    tNode* newNode()
+    tNode* newNode(char c)
     {
         tNode* new_node = new tNode;
-        for(int i=0; i<5; i++)
-            new_node->children[i] = nullptr;  // for loop
+        new_node->label = c;
+        
         return new_node;
     }
     
     //need to delete;
     void printHelp(tNode *cur)
     {
-        /* for (typename std::vector<ValueType>::iterator it = cur->values.begin() ; it != cur->values.end(); ++it)
-         std::cout << ' ' << *it;*/
-       // std::cout << cur->children[3]->children[0]->children[1] << std::endl;
-       /* for (typename std::vector<ValueType>::iterator it = cur->children[3]->children[0]->children[1]->values.begin() ;
-             it != cur->children[3]->children[0]->children[1]->values.end();
-             ++it)
-            std::cout << ' ' << *it;*/
-
-        for(int i=0; i<5; i++)
+        if(cur->label == 'T')
+            return;
+            
+        for (typename std::vector<tNode*>::iterator it = cur->children.begin() ;
+                it != cur->children.end(); ++it)
         {
-            if(cur->children[i] == nullptr)
-            {
-                return;
-            }
-        }
-        
-        for(int i=0; i<5; i++)
-        {
-            if(cur->children[i] != nullptr)
-            {
-                std::cout << cur->children[i] << std::endl;
-                printHelp(cur->children[i]);
-            }
+                for (typename std::vector<ValueType>::iterator nit = (*it)->values.begin() ;
+                          nit != (*it)->values.end();
+                        ++nit)
+                    std::cout << (*nit) <<std::endl;
+                return printHelp(*it);
         }
     }
 };
@@ -74,8 +62,6 @@ inline
 Trie<ValueType>::Trie()
 {
     tNode *root_node = new tNode;  //initialize the tNode
-    for(int i=0; i<5; i++)
-        root_node->children[i] = nullptr;  // for loop
     root = root_node;
 }
 
@@ -96,59 +82,24 @@ void Trie<ValueType>::insertHelper(const std::string& key, tNode* cur, const Val
         cur->values.push_back(value);
         return;
     }
-    
-    if(key[0] == 'A')
+    if(cur->children.size() == 0)
     {
-        if(cur->children[0] != nullptr)
-            insertHelper(key.substr(1), cur->children[0], value);
-        else
-        {
-            cur->children[0] = newNode();
-            insertHelper(key.substr(1), cur->children[0], value);
-        }
+        tNode *newnode = newNode(key[0]);
+        cur->children.push_back(newnode);
+        return insertHelper(key.substr(1), newnode, value);
     }
-    
-     if(key[0] == 'T')
+    else
     {
-        if(cur->children[1] != nullptr)
-            insertHelper(key.substr(1), cur->children[1], value);
-        else
+        for(typename std::vector<tNode*>::iterator it = cur->children.begin();
+                  it != cur->children.end(); ++it)
         {
-            cur->children[1] = newNode();
-            insertHelper(key.substr(1), cur->children[1], value);
+            if(key[0] == (*it)->label)
+                return insertHelper(key.substr(1), *it, value);
         }
+        tNode *newnode = newNode(key[0]);
+        cur->children.push_back(newnode);
+        return insertHelper(key.substr(1), newnode, value);
     }
-    if(key[0] == 'C')
-    {
-        if(cur->children[2] != nullptr)
-            insertHelper(key.substr(1), cur->children[2], value);
-        else
-        {
-            cur->children[2] = newNode();
-            insertHelper(key.substr(1), cur->children[2], value);
-        }
-    }
-    if(key[0] == 'G')
-    {
-        if(cur->children[3] != nullptr)
-            insertHelper(key.substr(1), cur->children[3], value);
-        else
-        {
-            cur->children[3] = newNode();
-            insertHelper(key.substr(1), cur->children[3], value);
-        }
-    }
-    if(key[0] == 'N')
-    {
-        if(cur->children[4] != nullptr)
-            insertHelper(key.substr(1), cur->children[4], value);
-        else
-        {
-            cur->children[4] = newNode();
-            insertHelper(key.substr(1), cur->children[4], value);
-        }
-    }
-    //std::cout << "ghhhh" << std::endl;
 }
                  
 template<typename ValueType>
@@ -162,49 +113,16 @@ std::vector<ValueType> Trie<ValueType>::findHelper(const std::string& key, tNode
 {
     std::vector<ValueType> find_values;
 
-    if(exactMatchOnly == true)
+   /* if(exactMatchOnly == true)
     {
-        if(key.size() == 0)
-        {
-            for (typename std::vector<ValueType>::iterator it = cur->values.begin();
-                 it != cur->values.end(); ++it)
-                find_values.push_back((*it));
-            return find_values;
-        }
         
-        if(key[0] == 'A')
-        {
-            if(cur->children[0] != nullptr)
-                return findHelper(key.substr(1), cur->children[0], exactMatchOnly);
-        }
-        
-        if(key[0] == 'T')
-        {
-            if(cur->children[1] != nullptr)
-                return findHelper(key.substr(1), cur->children[1], exactMatchOnly);
-        }
-        if(key[0] == 'C')
-        {
-            if(cur->children[2] != nullptr)
-                return findHelper(key.substr(1), cur->children[2], exactMatchOnly);
-        }
-        if(key[0] == 'G')
-        {
-            if(cur->children[3] != nullptr)
-                return findHelper(key.substr(1), cur->children[3], exactMatchOnly);
-        }
-        if(key[0] == 'N')
-        {
-            if(cur->children[4] != nullptr)
-                return findHelper(key.substr(1), cur->children[4], exactMatchOnly);
-        }
-    }
+    }*/
     
-    if(exactMatchOnly == false)
+/*    if(exactMatchOnly == false)
     {
         
         return;
-    }
+    }*/
     
     return find_values;
 }
