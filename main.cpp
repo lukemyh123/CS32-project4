@@ -3,7 +3,7 @@
 //  project4
 //
 //  Created by yunhui ma on 3/6/19.
-//  Copyright Â© 2019 luke. All rights reserved.
+//  Copyright © 2019 luke. All rights reserved.
 //
 
 #include <iostream>
@@ -12,23 +12,29 @@
 #include "Trie.h"
 using namespace std;
 int main() {
-    
-  Trie<int>    trie;        //    This    is    like    std::multimap<std::string,int>    trie;
-   /* trie.insert("GATTACA",    42);        //    GATTACA    Ã  {42}
-    trie.insert("GATTACA",    17);       //    GATTACA    Ã  {42,    17}
-    trie.insert("GATTACA",    42);*/
-    
-    //trie.insert("CA",    10);        //    GATTACA    Ã  {42}
-    //trie.insert("GA",    42);        //    GATTACA    Ã  {42}
-    trie.insert("GKb",    17);       //    GATTACA    Ã  {42,    17}
-    trie.insert("GKb",    42);
-    trie.insert("GKb",    5);
-    trie.insert("KKT",    42);
 
-    trie.print();
-    /*vector<int> temp = trie.find("GAT", true);//    GATTACA    Ã  {42,    17,    42}
-    for (vector<int>::iterator it = temp.begin();
-         it != temp.end(); ++it)
-        cout << *it << endl;*/
-    return 0;
+	Trie<int>    trie;        //    This    is    like    std::multimap<std::string,int>    trie;
+	 /* trie.insert("GATTACA",    42);        //    GATTACA    à {42}
+	  trie.insert("GATTACA",    17);       //    GATTACA    à {42,    17}
+	  trie.insert("GATTACA",    42);*/
+
+	  //trie.insert("CA",    10);        //    GATTACA    à {42}
+	  //trie.insert("GA",    42);        //    GATTACA    à {42}
+	trie.insert("GKb", 17);       //    GATTACA    à {42,    17}
+	trie.insert("GKb", 42);
+	trie.insert("GKb", 5);
+	trie.insert("GKb", 56);
+
+	trie.insert("GKa", 100);
+	trie.insert("GKa", 100);
+
+	trie.insert("KKT", 42);
+
+	//trie.print();
+	vector<int> temp = trie.find("GKb", false);//    GATTACA    à {42,    17,    42}
+	for (vector<int>::iterator it = temp.begin();
+		 it != temp.end(); ++it)
+		cout << (*it) << endl;
+
+	return 0;
 }
