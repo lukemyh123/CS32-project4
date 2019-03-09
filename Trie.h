@@ -31,10 +31,9 @@ private:
     std::vector<tNode*> paths;  //push_back all possible paths
     
     void insertHelper(const std::string& key, tNode* cur, const ValueType& value);
+    void resetHelper(tNode* cur);
     std::vector<ValueType> findHelperTrue(const std::string& key, tNode* cur) const;
     std::vector<ValueType> findHelperFalse(const std::string& key, tNode* cur) const;
-    std::vector<ValueType> findAnotherHelperFalse(const std::string& key, tNode* cur) const;
-    
     
     //void findAllPaths(const std::string& key, tNode* cur);
     //void findAllPathsHelper(tNode* cur);
@@ -70,19 +69,20 @@ inline
 Trie<ValueType>::Trie()
 {
     tNode *root_node = new tNode;  //initialize the tNode
+    root_node->label = ' ';
     root = root_node;
 }
 
 template<typename ValueType>
 void Trie<ValueType>::reset()
 {
-    for (typename std::vector<tNode*>::iterator it = root->children.begin();
-         it != root->children.end();)
-    {
-        delete *it;
-        it = root->children.erase(it);
-    }
+    if(root->children.size() == 0)
+        return;
+    resetHelper(root);
+    tNode *new_node = new tNode;
+    root = new_node;
 }
+
 template<typename ValueType>
 void Trie<ValueType>::insert(const std::string& key, const ValueType& value)
 {
@@ -120,29 +120,20 @@ void Trie<ValueType>::insertHelper(const std::string& key, tNode* cur, const Val
     }
 }
 
-/*template<typename ValueType>
- void Trie<ValueType>::findAllPaths(const std::string& key, tNode* cur)
- {
- for (typename std::vector<tNode*>::iterator it = cur->children.begin();
- it != cur->children.end(); ++it)
- {
- if (key[0] == (*it)->label)
- {
- return findAllPathsHelper(*it);
- }
- }
- }
- template<typename ValueType>
- void Trie<ValueType>::findAllPathsHelper(tNode* cur)
- {
- if (cur->children.size() == 0)
- return;
- for (typename std::vector<tNode*>::iterator it = cur->children.begin();
- it != cur->children.end(); ++it)
- {
- return findAllPathsHelper(*it);
- }
- }*/
+template<typename ValueType>
+void Trie<ValueType>::resetHelper(tNode* cur)
+{
+    if (cur == nullptr)
+        return;
+    
+    for (typename std::vector<tNode*>::iterator it = cur->children.begin();
+         it != cur->children.end(); it++)
+    {
+        resetHelper(*it);
+    }
+
+    delete cur;
+}
 
 
 template<typename ValueType>
@@ -157,12 +148,12 @@ std::vector<ValueType> Trie<ValueType>::find(const std::string& key, bool exactM
         for (typename std::vector<tNode*>::iterator it = root->children.begin();
              it != root->children.end(); ++it)
         {
-            if (key[0] == (*it)->label)
-                return findAnotherHelperFalse(key.substr(1), *it);
+            if (key[0] == (*it)->label)   //make sure the first key is matched
+                return findHelperFalse(key.substr(1), *it);
         }
     }
     
-    return find_values;
+    return find_values;  //return a empty vector
 
 }
 
@@ -189,24 +180,8 @@ std::vector<ValueType> Trie<ValueType>::findHelperTrue(const std::string& key, t
     return find_values;
 }
 
-/*template<typename ValueType>
-std::vector<ValueType> Trie<ValueType>::findHelperFalse(const std::string& key, tNode* cur) const
-{
-    //make sure the first key match
-    std::vector<ValueType> find_values;
-
-    for (typename std::vector<tNode*>::iterator it = cur->children.begin();
-         it != cur->children.end(); ++it)
-    {
-        if (key[0] == (*it)->label)
-            return find_values insert() findAnotherHelperFalse(key.substr(1), *it);
-    }
-    return find_values;
-
-}*/
-
 template<typename ValueType>
-std::vector<ValueType> Trie<ValueType>::findAnotherHelperFalse(const std::string& key, tNode* cur) const
+std::vector<ValueType> Trie<ValueType>::findHelperFalse(const std::string& key, tNode* cur) const
 {
     std::vector<ValueType> find_values;
     
@@ -224,14 +199,13 @@ std::vector<ValueType> Trie<ValueType>::findAnotherHelperFalse(const std::string
     {
         if (key[0] == (*it)->label)
         {
-            std::vector<ValueType> f_find_values = findAnotherHelperFalse(key.substr(1), *it);
+            std::vector<ValueType> f_find_values = findHelperFalse(key.substr(1), *it);
             find_values.insert(find_values.begin(), f_find_values.begin(), f_find_values.end());
         }
 
-            //find_values.insert(find_values.end(), findAnotherHelperFalse(key.substr(1), *it));
-        if(key[0] != (*it)->label)
+        if(key[0] != (*it)->label)  //if it found a mismatched character, just use the findHelperTrue function
         {
-            std::vector<ValueType> k_find_values = findAnotherHelperFalse(key.substr(1), *it);
+            std::vector<ValueType> k_find_values = findHelperTrue(key.substr(1), *it);
             find_values.insert(find_values.begin(), k_find_values.begin(),
                                k_find_values.end());
         }
