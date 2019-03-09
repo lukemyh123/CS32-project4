@@ -31,26 +31,57 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
     string s;
     string name;
     string dna;
+    string dna_upper;
     bool isfirst = true;
     while(getline(genomeSource, s))
     {
         if(s.at(0) == '>')
         {
             if ( !isfirst) {
-                Genome *new_genome = new Genome(name, dna);
+                for(int i=0; i<dna.size();i++)
+                {
+                    if(dna[i] == 'a' || dna[i] == 'A')
+                        dna_upper+="A";
+                    if(dna[i] == 'c' || dna[i] == 'C')
+                        dna_upper+="C";
+                    if(dna[i] == 't' || dna[i] == 'T')
+                        dna_upper+="T";
+                    if(dna[i] == 'g' || dna[i] == 'G')
+                        dna_upper+="G";
+                    if(dna[i] == 'n' || dna[i] == 'N')
+                        dna_upper+="N";
+                    //if(dna[i]=='a')
+                }
+                Genome *new_genome = new Genome(name, dna_upper);
                 genomes.push_back(*new_genome);
             }
             else isfirst = false;
                 
             name = s.substr(1);  //name
             dna = "";
+            dna_upper = "";
         }
         else
         {
             dna += s;  //dna sequency
         }
     }
-    Genome *new_genome = new Genome(name, dna);
+
+    for(int i=0; i<dna.size();i++)
+    {
+        if(dna[i] == 'a' || dna[i] == 'A')
+            dna_upper+="A";
+        if(dna[i] == 'c' || dna[i] == 'C')
+            dna_upper+="C";
+        if(dna[i] == 't' || dna[i] == 'T')
+            dna_upper+="T";
+        if(dna[i] == 'g' || dna[i] == 'G')
+            dna_upper+="G";
+        if(dna[i] == 'n' || dna[i] == 'N')
+            dna_upper+="N";
+        //if(dna[i]=='a')
+    }
+    Genome *new_genome = new Genome(name, dna_upper); //add the last name and dna sequency
     genomes.push_back(*new_genome);
     
     //genomes->push_back(s);
