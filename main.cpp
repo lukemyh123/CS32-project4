@@ -67,9 +67,17 @@ int main() {
     {
         cout << "Loaded " <<vg.size()<<" genomes successfully:" <<endl;
         for(int k = 0; k != vg.size(); k++)
-            cout << vg[k].name() << endl;
+            cout << vg[k].length() << " " << vg[k].name() << endl;
     }
     else
         cout << "Error loading genome data"<<endl;
+    
+    Genome g("oryx",
+             "GCTCGGNACACATCCGCCGCGGACGGGACGGGATTCGGGCTGTCGATTGTCTCACAGATCGTCGACGTACATGACTGGGA");
+    
+    string f1, f2, f3;
+    bool result1 = g.extract(0, 5, f1);     //    result1    =    true,    f1    =    “GCTCG”;
+    bool result2 = g.extract(74, 6, f2); //    result2 =    true,    f2 =    “CTGGGA”;
+    bool result3 = g.extract(74, 7, f3); //    result3 =    false,    f3 is    unchanged
     return 0;
 }

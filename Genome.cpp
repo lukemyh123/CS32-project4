@@ -17,7 +17,6 @@ public:
 private:
     string m_name;
     string m_sequence;
-    int m_length;
 };
 
 GenomeImpl::GenomeImpl(const string& nm, const string& sequence)
@@ -84,23 +83,26 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
     Genome *new_genome = new Genome(name, dna_upper); //add the last name and dna sequency
     genomes.push_back(*new_genome);
     
-    //genomes->push_back(s);
-    return true;  // This compiles, but may not be correct
+    return true;
 }
 
 int GenomeImpl::length() const
 {
-    return 0;  // This compiles, but may not be correct
+    return (int)m_sequence.size();
 }
 
 string GenomeImpl::name() const
 {
-    return m_sequence;  // This compiles, but may not be correct
+    return m_name;
 }
 
 bool GenomeImpl::extract(int position, int length, string& fragment) const
 {
-    return false;  // This compiles, but may not be correct
+    for(int i=0; i<m_sequence.size(); i++)
+    {
+        
+    }
+    return false;
 }
 
 //******************** Genome functions ************************************
