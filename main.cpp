@@ -53,7 +53,7 @@ int main() {
     for (vector<int>::iterator it = tempr.begin();
          it != tempr.end(); ++it)
         cout << (*it) << " ";*/
-    string filename = "/Users/yunhuima/Documents/CS32/Gee-nomics/data/test.txt";
+   /* string filename = "/Users/yunhuima/Documents/CS32/Gee-nomics/data/test.txt";
 
     ifstream strm(filename);
     if(!strm)
@@ -71,6 +71,7 @@ int main() {
     }
     else
         cout << "Error loading genome data"<<endl;
+    */
     
     Genome g("oryx",
              "GCTCGGNACACATCCGCCGCGGACGGGACGGGATTCGGGCTGTCGATTGTCTCACAGATCGTCGACGTACATGACTGGGA");
@@ -79,5 +80,7 @@ int main() {
     bool result1 = g.extract(0, 5, f1);     //    result1    =    true,    f1    =    “GCTCG”;
     bool result2 = g.extract(74, 6, f2); //    result2 =    true,    f2 =    “CTGGGA”;
     bool result3 = g.extract(74, 7, f3); //    result3 =    false,    f3 is    unchanged
+    
+    cout << result3 <<endl;
     return 0;
 }

@@ -98,11 +98,16 @@ string GenomeImpl::name() const
 
 bool GenomeImpl::extract(int position, int length, string& fragment) const
 {
-    for(int i=0; i<m_sequence.size(); i++)
+    if(position > m_sequence.size())
+        return false;
+    if(position + length > m_sequence.size())
+        return false;
+    
+    for(int i=position; i<(position+length); i++)
     {
-        
+        fragment+=m_sequence[i];
     }
-    return false;
+    return true;
 }
 
 //******************** Genome functions ************************************
