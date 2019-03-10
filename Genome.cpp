@@ -50,8 +50,8 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
 					if (dna[i] == 'n' || dna[i] == 'N')
 						dna_upper += "N";
 				}
-				Genome *new_genome = new Genome(name, dna_upper);
-				genomes.push_back(*new_genome);
+				Genome new_genome(name, dna_upper);
+				genomes.push_back(new_genome);
 			}
 			else isfirst = false;
 
@@ -79,8 +79,8 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
 			dna_upper += "N";
 		//if(dna[i]=='a')
 	}
-	Genome *new_genome = new Genome(name, dna_upper); //add the last name and dna sequency
-	genomes.push_back(*new_genome);
+	Genome new_genome(name, dna_upper); //add the last name and dna sequency
+	genomes.push_back(new_genome);
 
 	return true;
 }

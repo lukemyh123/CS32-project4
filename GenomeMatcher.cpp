@@ -11,6 +11,7 @@ class GenomeMatcherImpl
 {
 public:
 	GenomeMatcherImpl(int minSearchLength);
+	//~GenomeMatcherImpl();
 	void addGenome(const Genome& genome);
 	int minimumSearchLength() const;
 	bool findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const;
@@ -18,13 +19,13 @@ public:
 private:
 	int m_minSearchLength;  //for findGenomesWithThisDNA()
 
-	struct nameAndPos
+	struct GenomeAndPos
 	{
 		Genome *m_genome;
 		int pos;
 	};
 
-	Trie<nameAndPos*> trie;
+	Trie<GenomeAndPos> trie;
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
@@ -42,10 +43,10 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 		string dna_sequency;
 		if (genome.extract(0, minimumSearchLength(), dna_sequency))
 		{
-			nameAndPos* temp = new nameAndPos;
+			GenomeAndPos temp;
 			Genome *newTemp = new Genome(genome);
-			temp->m_genome = newTemp;
-			temp->pos = 0;
+			temp.m_genome = newTemp;
+			temp.pos = 0;
 			trie.insert(dna_sequency, temp);
 		}
 	}
@@ -56,10 +57,10 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 			string dna_sequency;
 			if (genome.extract(i, minimumSearchLength(), dna_sequency))
 			{
-				nameAndPos* temp = new nameAndPos;
+				GenomeAndPos temp;
 				Genome *newTemp = new Genome(genome);
-				temp->m_genome = newTemp;
-				temp->pos = i;
+				temp.m_genome = newTemp;
+				temp.pos = i;
 				trie.insert(dna_sequency, temp);
 			}
 		}
@@ -86,15 +87,14 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 
 	if (minimumLength == minimumSearchLength())
 	{
-		vector<nameAndPos*> temp = trie.find(prefi_sequence, exactMatchOnly);
-		for (vector<nameAndPos*>::iterator it = temp.begin(); it != temp.end(); ++it)
+		vector<GenomeAndPos> temp = trie.find(prefi_sequence, exactMatchOnly);
+		for (vector<GenomeAndPos>::iterator it = temp.begin(); it != temp.end(); ++it)
 		{
-			//cout << (*it)->m_genome->name() << endl;
-			DNAMatch *new_match = new DNAMatch;
-			new_match->genomeName = (*it)->m_genome->name();
-			new_match->position = (*it)->pos;
-			new_match->length = minimumLength;
-			matches.push_back(*new_match);
+			DNAMatch new_match;
+			new_match.genomeName = (*it).m_genome->name();
+			new_match.position = (*it).pos;
+			new_match.length = minimumLength;
+			matches.push_back(new_match);
 		}
 	}
 
