@@ -49,7 +49,6 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
 						dna_upper += "G";
 					if (dna[i] == 'n' || dna[i] == 'N')
 						dna_upper += "N";
-					//if(dna[i]=='a')
 				}
 				Genome *new_genome = new Genome(name, dna_upper);
 				genomes.push_back(*new_genome);

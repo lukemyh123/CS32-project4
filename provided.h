@@ -47,8 +47,6 @@ public:
 	int minimumSearchLength() const;
 	bool findGenomesWithThisDNA(const std::string& fragment, int minimumLength, bool exactMatchOnly, std::vector<DNAMatch>& matches) const;
 	bool findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, std::vector<GenomeMatch>& results) const;
-	
-	void test();
 
 	// We prevent a GenomeMatcher object from being copied or assigned.
 	GenomeMatcher(const GenomeMatcher&) = delete;

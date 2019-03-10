@@ -77,8 +77,11 @@ int main() {
 	gm.addGenome(g2);
 	gm.addGenome(g3);
 
-	gm.test();
-
+	vector<DNAMatch> matches;
+	bool result;
+	result = gm.findGenomesWithThisDNA("GAAG", 4, true, matches);
+	for (vector<DNAMatch>::iterator it = matches.begin(); it != matches.end(); ++it)
+		cout << (*it).genomeName << " " << (*it).position << " " << (*it).length << endl;
 	/*string f1, f2, f3;
 	bool result1 = g.extract(0, 5, f1);     //    result1    =    true,    f1    =    “GCTCG”;
 	bool result2 = g.extract(74, 6, f2); //    result2 =    true,    f2 =    “CTGGGA”;

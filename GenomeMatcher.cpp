@@ -14,8 +14,6 @@ public:
 	int minimumSearchLength() const;
 	bool findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const;
 	bool findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const;
-	
-	void test();
 private:
 	int m_minSearchLength;  //for findGenomesWithThisDNA()
 
@@ -27,14 +25,9 @@ private:
 
 	Trie<nameAndPos*> trie;
 
-};
+	Trie<Genome> trie_new;
 
-void GenomeMatcherImpl::test()
-{
-	vector<nameAndPos*> temp = trie.find("GAAG", true);
-	for (vector<nameAndPos*>::iterator it = temp.begin(); it != temp.end(); ++it)
-		cout << (*it)->genome_name << endl;
-}
+};
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
 {
@@ -52,6 +45,12 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 			temp->genome_name = genome.name();
 			temp->pos = 0;
 			trie.insert(dna_sequency, temp);
+
+			/*string sub_sequency;
+			genome.extract(0, genome.length(), sub_sequency);
+			Genome g1(genome.name(), sub_sequency);
+			trie_new.insert(dna_sequency, g1);*/
+			
 		}
 	}
 	else
@@ -88,10 +87,31 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 		prefi_sequence += fragment[i];
 	}
 
-	/*vector<int> temp = trie.find(prefi_sequence, true);
-	for (vector<int>::iterator it = temp.begin(); it != temp.end(); ++it)
-		cout << (*it) << endl;*/
+	if (minimumLength == minimumSearchLength())
+	{
+		vector<nameAndPos*> temp = trie.find(prefi_sequence, exactMatchOnly);
+		for (vector<nameAndPos*>::iterator it = temp.begin(); it != temp.end(); ++it)
+		{
+			//cout << (*it)->genome_name << endl;
+			DNAMatch *new_match = new DNAMatch;
+			new_match->genomeName = (*it)->genome_name;
+			new_match->position = (*it)->pos;
+			new_match->length = minimumLength;
+			matches.push_back(*new_match);
+		}
+	}
 
+	if (minimumLength > minimumSearchLength())
+	{
+		vector<nameAndPos*> temp = trie.find(prefi_sequence, exactMatchOnly);
+		for (vector<nameAndPos*>::iterator it = temp.begin(); it != temp.end(); ++it)
+		{
+			//cout << (*it)->genome_name << endl;
+			string rest_sequence;
+			int i = (*it)->pos;
+		}
+	}
+	
 	//DNAMatch *new_match = new DNAMatch;
 	//new_match->genomeName = name;
 	//new_match->position = position;
@@ -128,11 +148,6 @@ void GenomeMatcher::addGenome(const Genome& genome)
 int GenomeMatcher::minimumSearchLength() const
 {
 	return m_impl->minimumSearchLength();
-}
-
-void GenomeMatcher::test()
-{
-	m_impl->test();
 }
 
 bool GenomeMatcher::findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const
