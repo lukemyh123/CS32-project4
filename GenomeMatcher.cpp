@@ -98,16 +98,20 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 		}
 	}
 
-/*	if (minimumLength > minimumSearchLength())
+	if (minimumLength > minimumSearchLength())
 	{
-		vector<nameAndPos*> temp = trie.find(prefi_sequence, exactMatchOnly);
-		for (vector<nameAndPos*>::iterator it = temp.begin(); it != temp.end(); ++it)
+		vector<GenomeAndPos> temp = trie.find(prefi_sequence, exactMatchOnly);
+		for (vector<GenomeAndPos>::iterator it = temp.begin(); it != temp.end(); ++it)
 		{
-			//cout << (*it)->genome_name << endl;
+			cout << (*it).m_genome->name() << " " <<(*it).pos << endl;
 			string rest_sequence;
-			int i = (*it)->pos;
+			if ((*it).m_genome->extract((*it).pos + minimumSearchLength(), 5, rest_sequence))
+			{
+				cout << rest_sequence << endl;
+			}
+			
 		}
-	}*/
+	}
 	
 	//DNAMatch *new_match = new DNAMatch;
 	//new_match->genomeName = name;
