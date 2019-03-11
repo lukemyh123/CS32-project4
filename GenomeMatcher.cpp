@@ -195,9 +195,7 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
                             if (match_sequence[j] == fragment[j])
                                 length++;
                             else if(match_sequence[j] != fragment[j])
-                            {
                                 break;
-                            }
                         }
                     }
                 }
@@ -221,7 +219,10 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
                                 length++;
                             else if(match_sequence[j] != fragment[j])
                             {
-                                break;
+                                if(misMatches == 0)
+                                    length++;
+                                else if(misMatches == 1)
+                                    break;
                             }
                         }
                     }

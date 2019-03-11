@@ -76,7 +76,7 @@ int main() {
     
     vector<DNAMatch> matches;
     bool result;
-    result = gm.findGenomesWithThisDNA("ACGTGCGAGACTTAGAGCG", 12, false, matches);
+    result = gm.findGenomesWithThisDNA("ACGTGCGAGACTTAGAGCC", 12, false, matches);
     for (vector<DNAMatch>::iterator it = matches.begin(); it != matches.end(); ++it)
         cout << (*it).genomeName << " " << (*it).length << " " << (*it).position << endl;
     /*string f1, f2, f3;
