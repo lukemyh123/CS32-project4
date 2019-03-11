@@ -79,7 +79,7 @@ int main() {
 
 	vector<DNAMatch> matches;
 	bool result;
-	result = gm.findGenomesWithThisDNA("GAATAC", 6, true, matches);
+	result = gm.findGenomesWithThisDNA("GAAG", 4, true, matches);
 	for (vector<DNAMatch>::iterator it = matches.begin(); it != matches.end(); ++it)
 		cout << (*it).genomeName << " " << (*it).position << " " << (*it).length << endl;
 	/*string f1, f2, f3;

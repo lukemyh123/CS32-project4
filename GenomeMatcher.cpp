@@ -80,6 +80,9 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 		return false;
 
 	string prefi_sequence;
+	bool alreadyHaveGenomeWithSameLength = false;
+	int length = 0;
+	int misMatch = 0;
 	for (int i = 0; i < minimumSearchLength(); i++)
 	{
 		prefi_sequence += fragment[i];
@@ -103,11 +106,50 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 		vector<GenomeAndPos> temp = trie.find(prefi_sequence, exactMatchOnly);
 		for (vector<GenomeAndPos>::iterator it = temp.begin(); it != temp.end(); ++it)
 		{
-			cout << (*it).m_genome->name() << " " <<(*it).pos << endl;
+			//cout << (*it).m_genome->name() << " " <<(*it).pos << endl;
 			string rest_sequence;
-			if ((*it).m_genome->extract((*it).pos + minimumSearchLength(), 5, rest_sequence))
+			if ((*it).m_genome->extract((*it).pos, fragment.size(), rest_sequence))
 			{
-				cout << rest_sequence << endl;
+				for (int i = 0; i < fragment.size(); i++)
+				{
+					if (exactMatchOnly == true)
+					{
+						if (rest_sequence[i] == fragment[i])
+							length++;
+						else
+							break;
+					}
+					if (exactMatchOnly == false)
+					{
+						if (rest_sequence[i] == fragment[i])
+							length++;
+						else if (rest_sequence[i] != fragment[i])
+						{
+							length++;
+							misMatch++;
+						}
+						if (misMatch == 2)
+							break;
+					}
+				}
+				if (misMatch != 2)
+				{
+					DNAMatch new_match;
+					new_match.genomeName = (*it).m_genome->name();
+					new_match.position = (*it).pos;
+					new_match.length = length;
+					for (vector<DNAMatch>::iterator nit = matches.begin(); nit != matches.end(); ++nit)
+					{
+						if ((*nit).genomeName != (*it).m_genome->name())
+							alreadyHaveGenomeWithSameLength = true;
+					}
+					if(alreadyHaveGenomeWithSameLength == false)
+						matches.push_back(new_match);
+
+					alreadyHaveGenomeWithSameLength = false;
+				}
+				length = 0;
+				misMatch = 0;
 			}
 			
 		}
