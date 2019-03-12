@@ -2,7 +2,6 @@
 #include "Trie.h"
 #include <string>
 #include <vector>
-#include <map>
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -29,7 +28,7 @@ private:
     Trie<GenomeAndPos> trie;
     void whatPushBack(vector<DNAMatch>& matches, DNAMatch new_match) const;
     void push_backHelper(vector<DNAMatch>& matches, DNAMatch new_match, int minimumLength)  const;
-    void findRelatedGenomesHelper(vector<GenomeMatch>& result, GenomeMatch new_GenomeMatch) const;
+    void findRelatedGenomesHelper(vector<GenomeMatch>& result, GenomeMatch new_GenomeMatch, double matchPercentThreshold) const;
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
@@ -180,7 +179,7 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
             {
                 if(misMatches < 1)
                 {
-                    for (int j = minimumLength; j < fragment.size(); j++)   //check the rest sequence
+                    for (int j = minimumLength; j < match_sequence.size(); j++)   //check the rest sequence
                     {
                         if (exactMatchOnly == true)
                         {
@@ -203,7 +202,7 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
             {
                if(misMatches < 2)
                 {
-                    for (int j = minimumLength; j < fragment.size(); j++)   //check the rest sequence
+                    for (int j = minimumLength; j < match_sequence.size(); j++)   //check the rest sequence
                     {
                         if (exactMatchOnly == true)
                         {
@@ -252,14 +251,29 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
         return false;
 }
 
-void GenomeMatcherImpl::findRelatedGenomesHelper(vector<GenomeMatch>& matches, GenomeMatch new_GenomeMatch) const
+void GenomeMatcherImpl::findRelatedGenomesHelper(vector<GenomeMatch>& matches, GenomeMatch new_GenomeMatch, double matchPercentThreshold) const
 {
     if(matches.size() == 0)
-        matches.push_back(new_GenomeMatch);
-    for (vector<GenomeMatch>::iterator it = matches.begin(); it != matches.end(); ++it)
     {
-        if((*it).genomeName == new_GenomeMatch.genomeName)
-            (*it).percentMatch += new_GenomeMatch.percentMatch;
+        if(new_GenomeMatch.percentMatch >= matchPercentThreshold/100)
+            matches.push_back(new_GenomeMatch);
+    }
+    
+    if(matches.size() != 0)
+    {
+        for (vector<GenomeMatch>::iterator it = matches.begin(); it != matches.end(); ++it)
+        {
+            if((*it).genomeName == new_GenomeMatch.genomeName)
+            {
+                if(new_GenomeMatch.percentMatch >= matchPercentThreshold/100)
+                {
+                    (*it).percentMatch += new_GenomeMatch.percentMatch;
+                    return;
+                }
+            }
+        }
+        if(new_GenomeMatch.percentMatch >= matchPercentThreshold/100)
+            matches.push_back(new_GenomeMatch);
     }
 }
 
@@ -268,13 +282,14 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
     if(fragmentMatchLength < minimumSearchLength())
         return false;
     
-    string sub_sequence;
-    string match_sequence;
     vector<DNAMatch> matches;
     int counter = 0;
     bool extract_success;
     for(int i=0; i<query.length(); i++)
     {
+        string sub_sequence;
+       // string match_sequence;
+        
         extract_success = query.extract(i*fragmentMatchLength, fragmentMatchLength, sub_sequence);
         if(extract_success == true)
         {
@@ -285,15 +300,15 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
                     GenomeMatch new_GenomeMatch;
                     new_GenomeMatch.genomeName = matches[i].genomeName;
                     counter += matches[i].length;
-                    new_GenomeMatch.percentMatch = counter/query.length();
-                    findRelatedGenomesHelper(results,new_GenomeMatch);
+                    new_GenomeMatch.percentMatch = counter/fragmentMatchLength;
+                    findRelatedGenomesHelper(results,new_GenomeMatch, matchPercentThreshold);
                     counter = 0; //reset the counter;
                 }
             }
         }
     }
     
-    if(results.size() != 0)
+   if(results.size() != 0)
         return true;
     else
         return false;
