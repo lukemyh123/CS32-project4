@@ -27,7 +27,7 @@ private:
     vector<Genome> m_genome;
     Trie<GenomeAndPos> trie;
     void whatPushBack(vector<DNAMatch>& matches, DNAMatch new_match) const;
-    void findRelatedGenomesHelper(vector<GenomeMatch>& temp_results, GenomeMatch new_GenomeMatch, double matchPercentThreshold) const;
+    void findRelatedGenomesHelper(vector<GenomeMatch>& temp_results, GenomeMatch new_GenomeMatch) const;
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
@@ -115,7 +115,6 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
     
     string prefi_sequence;
     bool extract_bool = true;
-    bool not_match = false;
     int length = 0;
     int misMatches = 0;
     for (int i = 0; i < minimumSearchLength(); i++)
@@ -244,7 +243,6 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
             length = 0;  //reset them for the next for loop
             misMatches = 0;
             extract_bool = true;
-            not_match = false;
         }
         
     }
@@ -255,7 +253,7 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
         return false;
 }
 
-void GenomeMatcherImpl::findRelatedGenomesHelper(vector<GenomeMatch>& temp_results, GenomeMatch new_GenomeMatch, double matchPercentThreshold) const
+void GenomeMatcherImpl::findRelatedGenomesHelper(vector<GenomeMatch>& temp_results, GenomeMatch new_GenomeMatch) const
 {
     if (temp_results.size() == 0)
     {
@@ -283,7 +281,6 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
     if (fragmentMatchLength < minimumSearchLength())
         return false;
     
-    vector<DNAMatch> matches;
     vector<GenomeMatch> temp_results;
     bool extract_success;
     int divideNum = query.length()/fragmentMatchLength;
@@ -294,23 +291,23 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
         extract_success = query.extract(i*fragmentMatchLength, fragmentMatchLength, sub_sequence);
         if (extract_success == true)
         {
+            vector<DNAMatch> matches;
             if (findGenomesWithThisDNA(sub_sequence, fragmentMatchLength, exactMatchOnly, matches))
             {
                 for (int j = 0; j < matches.size(); j++)
                 {
                     GenomeMatch new_GenomeMatch;
                     new_GenomeMatch.genomeName = matches[j].genomeName;
-                    new_GenomeMatch.percentMatch = 1 / divideNum;
-                    findRelatedGenomesHelper(temp_results, new_GenomeMatch, matchPercentThreshold);
+                    new_GenomeMatch.percentMatch = 1.0 / divideNum * 100.0;
+                    findRelatedGenomesHelper(temp_results, new_GenomeMatch);
                 }
             }
         }
     }
     
-    
     for (int u = 0; u < temp_results.size(); u++)
     {
-        if(temp_results[u].percentMatch >= matchPercentThreshold)
+        if(temp_results[u].percentMatch >= matchPercentThreshold/100)
             results.push_back(temp_results[u]);
     }
     
