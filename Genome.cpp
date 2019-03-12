@@ -77,7 +77,6 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
             dna_upper += "G";
         if (dna[i] == 'n' || dna[i] == 'N')
             dna_upper += "N";
-        //if(dna[i]=='a')
     }
     Genome new_genome(name, dna_upper); //add the last name and dna sequency
     genomes.push_back(new_genome);

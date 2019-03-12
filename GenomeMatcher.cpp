@@ -29,8 +29,7 @@ private:
     Trie<GenomeAndPos> trie;
     void whatPushBack(vector<DNAMatch>& matches, DNAMatch new_match) const;
     void push_backHelper(vector<DNAMatch>& matches, DNAMatch new_match, int minimumLength)  const;
-    void check_sequence(bool exactMatchOnly, int& length, int& misMatches);
-    //void whatPushBack(vector<DNAMatch> matches, DNAMatch new_match) const;
+    void findRelatedGenomesHelper(vector<GenomeMatch>& result, GenomeMatch new_GenomeMatch) const;
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
@@ -228,7 +227,6 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
                     }
                 }
             }
-
             
             DNAMatch new_match;
             new_match.genomeName = (*it).genome_name;
@@ -248,19 +246,57 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
         
     }
     
-    return true;
-    
-    //DNAMatch *new_match = new DNAMatch;
-    //new_match->genomeName = name;
-    //new_match->position = position;
-    //new_match->length = length;
-    //matches.push_back(new_match);
-    
+    if(matches.size() != 0)
+        return true;
+    else
+        return false;
+}
+
+void GenomeMatcherImpl::findRelatedGenomesHelper(vector<GenomeMatch>& matches, GenomeMatch new_GenomeMatch) const
+{
+    if(matches.size() == 0)
+        matches.push_back(new_GenomeMatch);
+    for (vector<GenomeMatch>::iterator it = matches.begin(); it != matches.end(); ++it)
+    {
+        if((*it).genomeName == new_GenomeMatch.genomeName)
+            (*it).percentMatch += new_GenomeMatch.percentMatch;
+    }
 }
 
 bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const
 {
-    return false;  // This compiles, but may not be correct
+    if(fragmentMatchLength < minimumSearchLength())
+        return false;
+    
+    string sub_sequence;
+    string match_sequence;
+    vector<DNAMatch> matches;
+    int counter = 0;
+    bool extract_success;
+    for(int i=0; i<query.length(); i++)
+    {
+        extract_success = query.extract(i*fragmentMatchLength, fragmentMatchLength, sub_sequence);
+        if(extract_success == true)
+        {
+            if(findGenomesWithThisDNA(sub_sequence, fragmentMatchLength, exactMatchOnly, matches))
+            {
+                for(int j=0; j<matches.size(); j++)
+                {
+                    GenomeMatch new_GenomeMatch;
+                    new_GenomeMatch.genomeName = matches[i].genomeName;
+                    counter += matches[i].length;
+                    new_GenomeMatch.percentMatch = counter/query.length();
+                    findRelatedGenomesHelper(results,new_GenomeMatch);
+                    counter = 0; //reset the counter;
+                }
+            }
+        }
+    }
+    
+    if(results.size() != 0)
+        return true;
+    else
+        return false;
 }
 
 //******************** GenomeMatcher functions ********************************

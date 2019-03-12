@@ -76,9 +76,10 @@ int main() {
     
     vector<DNAMatch> matches;
     bool result;
-    result = gm.findGenomesWithThisDNA("ACGTGCGAGACTTAGAGCC", 12, false, matches);
+    result = gm.findGenomesWithThisDNA("GAATAC", 6, true, matches);
     for (vector<DNAMatch>::iterator it = matches.begin(); it != matches.end(); ++it)
         cout << (*it).genomeName << " " << (*it).length << " " << (*it).position << endl;
+    cout << result << endl;
     /*string f1, f2, f3;
      bool result1 = g.extract(0, 5, f1);     //    result1    =    true,    f1    =    “GCTCG”;
      bool result2 = g.extract(74, 6, f2); //    result2 =    true,    f2 =    “CTGGGA”;
