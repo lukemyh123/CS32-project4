@@ -9,7 +9,7 @@ class Trie
 {
 public:
     Trie();
-    ~Trie() { delete root; };
+    ~Trie() {resetHelper(root);}
     void reset();
     void insert(const std::string& key, const ValueType& value);
     std::vector<ValueType> find(const std::string& key, bool exactMatchOnly) const;
@@ -25,23 +25,12 @@ private:
         std::vector<tNode*> children;
     };
     tNode *root;
-    std::vector<tNode*> paths;  //push_back all possible paths
     
     void insertHelper(const std::string& key, tNode* cur, const ValueType& value);
     void resetHelper(tNode* cur);
     std::vector<ValueType> findHelperTrue(const std::string& key, tNode* cur) const;
     std::vector<ValueType> findHelperFalse(const std::string& key, tNode* cur) const;
-    
-    //void findAllPaths(const std::string& key, tNode* cur);
-    //void findAllPathsHelper(tNode* cur);
-    
-    tNode* newNode(char c)
-    {
-        tNode* new_node = new tNode;
-        new_node->label = c;
-        
-        return new_node;
-    }
+
 };
 
 template<typename ValueType>
@@ -82,7 +71,8 @@ void Trie<ValueType>::insertHelper(const std::string& key, tNode* cur, const Val
     }
     if (cur->children.size() == 0)
     {
-        tNode *newnode = newNode(key[0]);
+        tNode *newnode = new tNode;
+        newnode->label = key[0];
         cur->children.push_back(newnode);
         return insertHelper(key.substr(1), newnode, value);
     }
@@ -94,9 +84,10 @@ void Trie<ValueType>::insertHelper(const std::string& key, tNode* cur, const Val
             if (key[0] == (*it)->label)
                 return insertHelper(key.substr(1), *it, value);
         }
-        tNode *newnode = newNode(key[0]);
-        cur->children.push_back(newnode);
-        return insertHelper(key.substr(1), newnode, value);
+        tNode *newnodeb = new tNode;
+        newnodeb->label = key[0];
+        cur->children.push_back(newnodeb);
+        return insertHelper(key.substr(1), newnodeb, value);
     }
 }
 

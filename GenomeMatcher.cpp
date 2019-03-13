@@ -146,7 +146,7 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
                 if (m_genome[i].name() == (*it).genome_name)
                 {
                     if(((*it).pos + fragment.size()) < m_genome[i].length())
-                       extract_bool = m_genome[i].extract((*it).pos, fragment.size(), match_sequence);
+                        extract_bool = m_genome[i].extract((*it).pos, fragment.size(), match_sequence);
                     else if(((*it).pos + fragment.size()) > m_genome[i].length())
                         extract_bool = m_genome[i].extract((*it).pos, m_genome[i].length()-(*it).pos, match_sequence);
                 }
